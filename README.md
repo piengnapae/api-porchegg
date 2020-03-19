@@ -1,4 +1,4 @@
-# porchegg-api
+# api-porchegg
 [![Build Status](https://travis-ci.com/nppi3enz/porchegg-api.svg?token=x1gvofY5ULJm5fexMUJE&branch=master)](https://travis-ci.com/nppi3enz/porchegg-api)
 [![codecov](https://codecov.io/gh/nppi3enz/porchegg-api/branch/master/graph/badge.svg?token=9R8TzUdJgk)](https://codecov.io/gh/nppi3enz/porchegg-api)
 

@@ -1,0 +1,25 @@
+language:
+  - php
+php:
+  - 7.3
+services:
+  - mysql
+before_script:
+  - cp .env.travis .env
+  - mysql -e 'create database lumen;'
+  - composer self-update
+  - composer install --no-interaction
+  - php artisan migrate
+  - travis_retry composer self-update
+  - travis_retry composer install --no-interaction --prefer-source --dev
+
+script:
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
+
+after_success:
+  - CODE_COVERAGE=$(php internals/coverage-checker.php coverage.xml 50)
+  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s -X POST -H "Authorization:Bearer $LINE_TOKEN" -d "message=[API] Test Success - Branch($TRAVIS_BRANCH) Pull Request($TRAVIS_PULL_REQUEST_BRANCH) %0D%0ASHA%3A $TRAVIS_PULL_REQUEST_SHA %0D%0ACode coverage%3A $CODE_COVERAGE%25" https://notify-api.line.me/api/notify)
+
+after_failure:
+  - bash <(curl -s -X POST -H "Authorization:Bearer $LINE_TOKEN" -d "message=[API] Test Failed - Branch($TRAVIS_BRANCH) Pull Request($TRAVIS_PULL_REQUEST_BRANCH) %0D%0ASHA%3A $TRAVIS_PULL_REQUEST_SHA" https://notify-api.line.me/api/notify)

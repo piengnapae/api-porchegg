@@ -1,0 +1,21 @@
+.env
+Jenkinsfile
+docker-compose.yml
+docker/nginx
+docker/php
+docker/mysql
+docker/Dockerfile*
+database/**/*.sql
+.vscode
+README.md
+
+# PHP
+vendor
+composer.lock
+
+# Nodejs
+node_modules
+package-lock.json
+npm-debug.log
+yarn.lock
+yarn-error.log

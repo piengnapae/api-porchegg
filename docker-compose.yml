@@ -1,0 +1,71 @@
+version: '3.7'
+services:
+  php:
+    container_name: porchegg-api
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    networks:
+      network-porchegg:
+        aliases:
+          - api.porchegg.local
+    volumes:
+      - ./:/var/www/html
+
+  nginx:
+    container_name: porchegg-api-nginx
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 9000:80
+    networks:
+      - network-porchegg
+
+  database:
+    container_name: porchegg-api-db
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - SERVICE_TAGS=dev
+      - SERVICE_NAME=mysql
+    ports:
+      - "9306:3306"
+    networks:
+      - network-porchegg
+
+  phpmyadmin:
+    restart: always
+    container_name: porchegg-api-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 9890:80
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - database
+    networks:
+      - network-porchegg
+
+#Docker Networks
+networks:
+  network-porchegg:
+    external: true
+    name: network-porchegg
+
+#Volumes
+volumes:
+  mysql:
+    driver: local
